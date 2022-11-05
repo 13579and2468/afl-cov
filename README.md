@@ -117,7 +117,7 @@ Here is an example:
 $ cd /path/to/project-gcov/
 $ afl-cov -d /path/to/afl-fuzz-output/ --live --coverage-cmd \
 "LD_LIBRARY_PATH=./lib/.libs ./bin/.libs/somebin -a -b -c" \
---code-dir .
+--code-dir . --lcov-web-all
 ```
 
 `/path/to/afl-fuzz-output/` is the output directory of afl-fuzz.
