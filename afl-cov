@@ -40,6 +40,7 @@ from shutil import copyfile
 from sys import argv
 from tempfile import NamedTemporaryFile
 from typing import Any, Dict, Iterator, List, Union, Optional, Tuple
+from os.path import exists
 
 try:
     import subprocess32 as subprocess
@@ -210,11 +211,16 @@ def process_afl_test_cases(cargs: argparse.Namespace) -> bool:
                 )
                 id_range_update(f, cov_paths)
 
+                if exists(os.path.dirname(f)+'/../queue_info'):
+                    args = open(os.path.dirname(f)+'/../queue_info/queue/'+os.path.basename(f),mode='r').read()
+                    args = args[:-1]  # yuan fuzz queue_info has a space in line end
+                    args = args[args.find(' '):args.rfind(' ')]
+
                 # execute the command to generate code coverage stats
                 # for the current AFL test case file
                 if run_once:
                     run_cmd(
-                        cargs.coverage_cmd.replace("AFL_FILE", f),
+                        cargs.coverage_cmd.replace("AFL_FILE", f).replace("AFL_ARGS",args),
                         cov_paths["log_file"],
                         cargs,
                         NO_OUTPUT,
@@ -224,7 +230,7 @@ def process_afl_test_cases(cargs: argparse.Namespace) -> bool:
                     )
                 else:
                     out_lines = run_cmd(
-                        cargs.coverage_cmd.replace("AFL_FILE", f),
+                        cargs.coverage_cmd.replace("AFL_FILE", f).replace("AFL_ARGS",args),
                         cov_paths["log_file"],
                         cargs,
                         WANT_OUTPUT,
@@ -269,7 +275,7 @@ def process_afl_test_cases(cargs: argparse.Namespace) -> bool:
                     if len(out_lines):
                         logr(
                             b"\n\n++++++ BEGIN - first exec output for CMD: %s"
-                            % (cargs.coverage_cmd.replace("AFL_FILE", f).encode()),
+                            % (cargs.coverage_cmd.replace("AFL_FILE", f).replace("AFL_ARGS",args).encode()),
                             cov_paths["log_file"],
                             cargs,
                         )
@@ -867,6 +873,7 @@ def run_cmd(
     fn: str,
     timeout: Optional[int] = None,
 ) -> Tuple[int, List[bytes]]:
+    print("sss : ",cmd)
     out = []
 
     if cargs.disable_cmd_redirection or collect == WANT_OUTPUT or collect == LOG_ERRORS:

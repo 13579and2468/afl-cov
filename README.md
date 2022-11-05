@@ -128,6 +128,9 @@ string as-is since `afl-cov` will automatically substitute it with each AFL
 `queue/id:NNNNNN*` in succession as it builds the code coverage reports.
 You can also use @@ instead of AFL_FILE, both notations work.
 
+The `AFL_ARGS` string will extract the args from file that yuan-fuzz will
+build in the `queue_info/queue/` directory under `/path/to/afl-fuzz-output`.
+
 Also, in the above command, this handles the case where the AFL fuzzing cycle
 is fuzzing the targeted binary via stdin.
 For the other style of fuzzing with AFL where a file is read from the filesystem, here is an example:
