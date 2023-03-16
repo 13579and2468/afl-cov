@@ -215,6 +215,8 @@ def process_afl_test_cases(cargs: argparse.Namespace) -> bool:
                     args = open(os.path.dirname(f)+'/../queue_info/queue/'+os.path.basename(f),mode='r').read()
                     args = args[:-1]  # yuan fuzz queue_info has a space in line end
                     args = args[args.find(' '):args.rfind(' ')]
+                    if '.cur_input' in args:
+                        args[:args.rfind(' ')]
 
                 # execute the command to generate code coverage stats
                 # for the current AFL test case file
